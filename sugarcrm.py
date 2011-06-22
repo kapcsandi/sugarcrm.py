@@ -4,6 +4,8 @@ import hashlib
 import types
 import time
 from Crypto.Cipher import DES3
+import itertools
+
 
 class SugarError(Exception):
     def __init__(self, value):
@@ -75,21 +77,8 @@ class SugarModule:
         self.fields = result['module_fields']
 
 
-    def search(self, start = 0, total = 20, fields = [], **query):
+    def search(self, query_str, start = 0, total = 20, fields = []):
         """Returns a list of SugarCRM entries that match the query."""
-        
-        # Build the API query string 
-        q_str = ''
-        for key in query.keys():
-            if q_str != '':
-                q_str += ' AND '
-            
-            if_cstm = ''
-            if key.endswith('_c'):
-                if_cstm = '_cstm'
-            
-            q_str += self.module_name.lower() + if_cstm + '.' + key + \
-                                ' = "' + query[key] + '"'
 
         if 'id' not in fields:
             fields.append('id')
@@ -100,7 +89,7 @@ class SugarModule:
         while count < total:
             result = self.instance.wsdl.get_entry_list(
                             self.instance.session, self.module_name,
-                            q_str, '', start + offset, fields,
+                            query_str, '', start + offset, fields,
                             total - count, 0)
             if result['result_count'] == 0:
                 break
@@ -121,6 +110,10 @@ class SugarModule:
                         count += 1
         
         return entry_list
+
+
+    def query(self):
+        return QueryList(self)
 
 
 class SugarEntry:
@@ -207,4 +200,72 @@ class SugarEntry:
 
     def relate(self, related):
         self.module.instance.relate(self, related)
+
+
+class QueryList():
+
+    def __init__(self, module):
+        self._module = module
+        self._query = ''
+        self._next_items = []
+        self._offset = 0
+
+
+    def __iter__(self):
+        return self
+
+
+    def next(self):
+        try:
+            item = self._next_items[0]
+            self._next_items = self._next_items[1:]
+            return item
+        except IndexError:
+            self._next_items = self._module.search(self._query,
+                                                start = self._offset, total = 5)
+            self._offset += len(self._next_items)
+            if len(self._next_items) == 0:
+                raise StopIteration
+            else:
+                return self.next()
+
+    def __getitem__(self, index):
+        try:
+            return next(itertools.islice(self,index,index+1))
+        except TypeError:
+            return list(itertools.islice(self,index.start,index.stop,index.step))
+
+
+
+    def build_query(self, **query):
+        # Build the API query string
+        q_str = ''
+        for key in query.keys():
+            if q_str != '':
+                q_str += ' AND '
+
+            if_cstm = ''
+            if key.endswith('_c'):
+                if_cstm = '_cstm'
+
+            q_str += self._module.module_name.lower() + if_cstm + '.' + key + \
+                                ' = "' + query[key] + '"'
+        return q_str
+
+
+    def filter(self, **query):
+        if self._query != '':
+            self._query = '(%s) AND (%s)' % (self._query,
+                                            self.build_query(**query))
+        else:
+            self._query = self.build_query(**query)
+
+
+    def exclude(self, **query):
+        if self._query != '':
+            self._query = '(%s) AND NOT (%s)' % (self._query,
+                                            self.build_query(**query))
+        else:
+            self._query = 'NOT (%s)' % self.build_query(**query)
+
 
