@@ -242,15 +242,38 @@ class QueryList():
         # Build the API query string
         q_str = ''
         for key in query.keys():
+            # Get the field and the operator from the query
+            key_field, key_sep, key_oper = key.partition('__')
             if q_str != '':
                 q_str += ' AND '
 
             if_cstm = ''
-            if key.endswith('_c'):
+            if key_field.endswith('_c'):
                 if_cstm = '_cstm'
 
-            q_str += self._module.module_name.lower() + if_cstm + '.' + key + \
-                                ' = "' + query[key] + '"'
+            field = self._module.module_name.lower() + if_cstm + '.' + key_field
+
+            if key_oper == 'exact':
+                q_str += '%s = "%s"' % (field, query[key])
+            elif key_oper == 'contains':
+                q_str += '%s LIKE "%%%s%%"' % (field, query[key])
+            elif key_oper == 'in':
+                q_str += '%s IN (' % field
+                for elem in query[key]:
+                    q_str += "'%s'," % elem
+                q_str = q_str.rstrip(',')
+                q_str += ')'
+            elif key_oper == 'gt':
+                q_str += '%s > "%s"' % (field, query[key])
+            elif key_oper == 'gte':
+                q_str += '%s >= "%s"' % (field, query[key])
+            elif key_oper == 'lt':
+                q_str += '%s < "%s"' % (field, query[key])
+            elif key_oper == 'lte':
+                q_str += '%s <= "%s"' % (field, query[key])
+            else:
+                raise LookupError('Unsupported operator')
+
         return q_str
 
 

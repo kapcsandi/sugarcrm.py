@@ -35,6 +35,10 @@ class TestSugarPy(unittest.TestCase):
                             "contacts.first_name='%s'" % str(newuuid))
         self.assertEqual(len(res), 1)
 
+    def test_query(self):
+        q = self.instance.modules['Contacts'].query()
+        q.filter(first_name__exact=self.entry['first_name'])
+        self.assertNotEqual(q, [])
 
 if __name__ == '__main__':
     unittest.main()
