@@ -1,8 +1,6 @@
 
 import SOAPpy
 import hashlib
-import types
-import time
 from Crypto.Cipher import DES3
 import itertools
 
