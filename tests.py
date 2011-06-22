@@ -31,7 +31,8 @@ class TestSugarPy(unittest.TestCase):
         self.assertEqual(self.entry['first_name'], 'Juan')
 
     def test_encontrar_unico(self):
-        res = self.instance.modules['Contacts'].search(first_name=str(newuuid))
+        res = self.instance.modules['Contacts'].search(
+                            "contacts.first_name='%s'" % str(newuuid))
         self.assertEqual(len(res), 1)
 
 
