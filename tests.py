@@ -25,12 +25,12 @@ class TestSugarPy(unittest.TestCase):
         self.entry['deleted'] = True
         self.entry.save()
 
-    def test_cambiar_nombre(self):
+    def test_setattr_getattr(self):
         self.entry['first_name'] = 'Juan'
         self.entry.save()
         self.assertEqual(self.entry['first_name'], 'Juan')
 
-    def test_encontrar_unico(self):
+    def test_search(self):
         res = self.instance.modules['Contacts'].search(
                             "contacts.first_name='%s'" % str(newuuid))
         self.assertEqual(len(res), 1)
