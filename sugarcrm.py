@@ -202,9 +202,9 @@ class SugarEntry:
 
 class QueryList():
 
-    def __init__(self, module):
+    def __init__(self, module, query = ''):
         self._module = module
-        self._query = ''
+        self._query = query
         self._next_items = []
         self._offset = 0
 
@@ -277,17 +277,19 @@ class QueryList():
 
     def filter(self, **query):
         if self._query != '':
-            self._query = '(%s) AND (%s)' % (self._query,
-                                            self.build_query(**query))
+            query = '(%s) AND (%s)' % (self._query, self.build_query(**query))
         else:
-            self._query = self.build_query(**query)
+            query = self.build_query(**query)
+
+        return QueryList(self._module, query)
 
 
     def exclude(self, **query):
         if self._query != '':
-            self._query = '(%s) AND NOT (%s)' % (self._query,
-                                            self.build_query(**query))
+            query = '(%s) AND NOT (%s)' % (self._query, self.build_query(**query))
         else:
-            self._query = 'NOT (%s)' % self.build_query(**query)
+            query = 'NOT (%s)' % self.build_query(**query)
+
+        return QueryList(self._module, query)
 
 

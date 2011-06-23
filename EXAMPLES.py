@@ -15,9 +15,9 @@ instance = sugarcrm.SugarInstance(WSDL_URL, USERNAME, PASSWORD,
                                     ['Contacts', 'Cases'], LDAP_PASSWD, LDAP_IV)
 
 # This way you query all the Contacts in your database...
-q1 = instance.modules['Contacts'].query()
+query = instance.modules['Contacts'].query()
 # ... but we just show the first ten of them.
-for contact in q1[:10]:
+for contact in query[:10]:
     print contact['first_name'] + ' ' + contact['last_name']
 
 # OUTPUT:
@@ -33,10 +33,10 @@ for contact in q1[:10]:
 # Gil Batten
 
 # We define a new query, but this time we specify a couple of query exclusions.
-q2 = instance.modules['Contacts'].query()
-q2.exclude(last_name__exact = 'Bassler')
-q2.exclude(first_name__exact = 'Morris')
-for contact in q2[:10]:
+query = instance.modules['Contacts'].query()
+new_query = query.exclude(last_name__exact = 'Bassler')
+new_query = new_query.exclude(first_name__exact = 'Morris')
+for contact in new_query[:10]:
     print contact['first_name'] + ' ' + contact['last_name']
 
 # OUTPUT:
@@ -54,9 +54,8 @@ for contact in q2[:10]:
 # This new query has a filter. Please notice that the filter parameter is the
 # field name in the SugarCRM module, followed by a double underscore, and then
 # an operator (it can be 'exact', 'contains', 'gt', 'gte', 'lt', 'lte' or 'in').
-q3 = instance.modules['Contacts'].query()
-q3.filter(last_name__contains='ass')
-for contact in q3[:10]:
+new_query = query.filter(last_name__contains='ass')
+for contact in new_query[:10]:
     print contact['first_name'] + ' ' + contact['last_name']
 
 # OUTPUT:
@@ -65,9 +64,8 @@ for contact in q3[:10]:
 # Blake Cassity
 # Ann Hassett
 
-q4 = instance.modules['Contacts'].query()
-q4.filter(last_name__in=['Bassler', 'Everitt'])
-for contact in q4[:10]:
+new_query = query.filter(last_name__in=['Bassler', 'Everitt'])
+for contact in new_query[:10]:
     print contact['first_name'] + ' ' + contact['last_name']
 
 # OUTPUT:
@@ -75,9 +73,9 @@ for contact in q4[:10]:
 # Rosario Bassler
 # Stanford Everitt
 
-q5 = instance.modules['Cases'].query()
-q5.filter(case_number__lt='7')
-for case in q5[:10]:
+query = instance.modules['Cases'].query()
+new_query = query.filter(case_number__lt='7')
+for case in new_query[:10]:
     print case['case_number'] + ' / ' + case['name'] + ' / ' + case['description']
 
 # OUTPUT:

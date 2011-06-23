@@ -37,7 +37,7 @@ class TestSugarPy(unittest.TestCase):
 
     def test_query(self):
         q = self.instance.modules['Contacts'].query()
-        q.filter(first_name__exact=self.entry['first_name'])
+        q = q.filter(first_name__exact=self.entry['first_name'])
         self.assertNotEqual(q, [])
 
 if __name__ == '__main__':
