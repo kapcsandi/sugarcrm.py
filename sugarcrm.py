@@ -52,6 +52,8 @@ class SugarInstance:
             self.modules[module] = SugarModule(self, module)
     
     def relate(self, main, secondary):
+        """Relate two SugarEntry objects."""
+
         rel = {}
         rel['module1'] = main.module.module_name
         rel['module1_id'] = main['id']
@@ -76,7 +78,7 @@ class SugarModule:
 
 
     def search(self, query_str, start = 0, total = 20, fields = []):
-        """Returns a list of SugarCRM entries that match the query."""
+        """Return a list of SugarEntry objects that match the query."""
 
         if 'id' not in fields:
             fields.append('id')
@@ -111,6 +113,12 @@ class SugarModule:
 
 
     def query(self):
+        """
+        Return a QueryList object for this SugarModule. Initially, it describes
+        all the objects in the module. One can find specific objects by
+        calling 'filter' and 'exclude' on the returned object.
+        """
+
         return QueryList(self)
 
 
@@ -133,7 +141,8 @@ class SugarEntry:
     
 
     def __getitem__(self, field_name):
-        """Value to return when self['field_name'] is used."""
+        """Return the value of the field 'field_name' of this SugarEntry."""
+
         if field_name in [item['name'] for item in self._module._fields]:
             try:
                 return self._fields[field_name]
@@ -160,6 +169,8 @@ class SugarEntry:
 
 
     def __setitem__(self, field_name, value):
+        """Set the value of the field 'field_name' of this SugarEntry."""
+
         if field_name in [item['name'] for item in self._module._fields]:
             self._fields[field_name] = value
             if field_name not in self._dirty_fields:
@@ -197,10 +208,13 @@ class SugarEntry:
 
 
     def relate(self, related):
+        """Relate this SugarEntry with the one passed as a parameter."""
+
         self._module._instance.relate(self, related)
 
 
 class QueryList():
+    """Query a SugarCRM module for specific entries."""
 
     def __init__(self, module, query = ''):
         self._module = module
@@ -276,6 +290,15 @@ class QueryList():
 
 
     def filter(self, **query):
+        """Filter this QueryList, returning a new QueryList.
+
+        query is a keyword argument dictionary where the filters are specified:
+        The keys should be some of the module's field names, suffixed by '__'
+        and one of the following operators: 'exact', 'contains', 'in', 'gt',
+        'gte', 'lt' or 'lte'. When the operator is 'in', the corresponding value
+        MUST be a list.
+        """
+
         if self._query != '':
             query = '(%s) AND (%s)' % (self._query, self._build_query(**query))
         else:
@@ -285,6 +308,10 @@ class QueryList():
 
 
     def exclude(self, **query):
+        """Filter this QueryList, returning a new QueryList, as in filter(), but
+        excluding the entries that match the query.
+        """
+
         if self._query != '':
             query = '(%s) AND NOT (%s)' % (self._query, self._build_query(**query))
         else:
