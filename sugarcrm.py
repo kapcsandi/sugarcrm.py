@@ -54,13 +54,9 @@ class SugarInstance:
     def relate(self, main, secondary):
         """Relate two SugarEntry objects."""
 
-        rel = {}
-        rel['module1'] = main.module.module_name
-        rel['module1_id'] = main['id']
-        rel['module2'] = secondary.module.module_name
-        rel['module2_id'] = secondary['id']
-        
-        self._wsdl.set_relationship(self.session, rel)
+        self._wsdl.set_relationship(self._session, main._module._module_name,
+                            main['id'], secondary._module._module_name.lower(),
+                            [secondary['id']])
 
 
 class SugarModule:
@@ -212,6 +208,22 @@ class SugarEntry:
 
         self._module._instance.relate(self, related)
 
+
+    def get_related(self, module_name):
+        """Return the related entries in the module 'module_name'"""
+
+        instance = self._module._instance
+        result = instance._wsdl.get_relationships(instance._session,
+                            self._module._module_name, self['id'],
+                            module_name.lower())
+
+        entries = []
+        for elem in result['entry_list']:
+            entry = SugarEntry(instance.modules[module_name])
+            entry._fields['id'] = elem['id']
+            entries.append(entry)
+
+        return entries
 
 class QueryList():
     """Query a SugarCRM module for specific entries."""

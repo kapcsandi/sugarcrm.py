@@ -86,3 +86,16 @@ for case in new_query[:10]:
 # 5 / Need assistance with large customization / 
 # 6 / Need to purchase additional licenses / 
 
+
+# Search the first case and relate it to the first contact
+query = instance.modules['Cases'].query()
+case = query[0]
+query = instance.modules['Contacts'].query()
+contact = query[0]
+case.relate(contact)
+
+case.get_related('Contacts')
+
+# OUTPUT:
+# [<sugarcrm.SugarEntry instance at 0x2a9ccf8>]
+
