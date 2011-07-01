@@ -1,7 +1,7 @@
 import sugarcrm
 
 # This is the URL for the wsdl resource in your SugarCRM instance.
-WSDL_URL = 'http://127.0.0.1/sugarcrm/service/v2/soap.php?wsdl'
+WSDL_URL = 'http://127.0.0.1/sugarcrm/service/v4/soap.php?wsdl'
 USERNAME = 'admin'
 PASSWORD = 'password'
 
