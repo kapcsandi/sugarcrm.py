@@ -136,7 +136,7 @@ class SugarEntry:
             self._fields['id'] = ''
 
 
-    def __repr__(self):
+    def __str__(self):
         return "<SugarCRM %s entry '%s'>" % \
                     (self._module._module_name.rstrip('s'), self['name'])
 
