@@ -91,11 +91,12 @@ for case in new_query[:10]:
 query = instance.modules['Cases'].query()
 case = query[0]
 query = instance.modules['Contacts'].query()
+query = query.filter(last_name__exact = 'Adger')
 contact = query[0]
 case.relate(contact)
 
 case.get_related('Contacts')
 
 # OUTPUT:
-# [<sugarcrm.SugarEntry instance at 0x2a9ccf8>]
+# [<SugarCRM Contact entry 'Darrin Adger'>]
 

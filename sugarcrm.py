@@ -134,7 +134,12 @@ class SugarEntry:
         # Make sure that the 'id' field is always defined.
         if 'id' not in self._fields.keys():
             self._fields['id'] = ''
-    
+
+
+    def __repr__(self):
+        return "<SugarCRM %s entry '%s'>" % \
+                    (self._module._module_name.rstrip('s'), self['name'])
+
 
     def __getitem__(self, field_name):
         """Return the value of the field 'field_name' of this SugarEntry."""
