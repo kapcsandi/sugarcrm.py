@@ -119,3 +119,8 @@ case.get_related('Contacts')
 # OUTPUT:
 # [<SugarCRM Contact entry 'Darrin Adger'>]
 
+# 'contact' holds a Contacts entry with last name 'Adger'. We can modify some
+# fields and then save it
+contact['birthdate'] = '1978-05-10'
+contact.save()
+
