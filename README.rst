@@ -26,5 +26,5 @@ Almost everything.
 
 Licence
 -------
-TBA.
+*sugarcrm.py* is released under the GNU GPL v3 license.
 
