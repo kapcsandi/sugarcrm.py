@@ -248,7 +248,7 @@ class SugarEntry:
 
         return entries
 
-class QueryList():
+class QueryList:
     """Query a SugarCRM module for specific entries."""
 
     def __init__(self, module, query = ''):
