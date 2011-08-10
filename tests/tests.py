@@ -17,6 +17,9 @@
 #    along with sugarcrm.py.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import sys
+sys.path.insert(1, "..")
+
 import unittest
 
 import sugarcrm
