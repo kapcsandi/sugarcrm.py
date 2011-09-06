@@ -355,3 +355,9 @@ class QueryList:
         return QueryList(self._module, query)
 
 
+    def __len__(self):
+        result = self._module._instance._wsdl.get_entries_count(
+                        self._module._instance._session,
+                        self._module._module_name, self._query, 0)
+        return result['result_count']
+
